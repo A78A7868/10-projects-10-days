@@ -1,14 +1,13 @@
 // DOM Elements
-const timeDisplay = document.getElementById('time-display');
-const startPauseBtn = document.getElementById('start-pause-btn');
-const resetBtn = document.getElementById('reset-btn');
-const progressCircle = document.getElementById('progress-circle');
-const playIcon = document.getElementById('play-icon');
-const pauseIcon = document.getElementById('pause-icon');
-const startPauseLabel = document.getElementById('start-pause-label');
-const timerStatus = document.getElementById('timer-status');
-const workBtn = document.getElementById('work-btn');
-const breakBtn = document.getElementById('break-btn');
+const timeDisplay = document.getElementById('center-time-display');
+const startPauseBtn = document.getElementById('center-start-btn');
+const resetBtn = document.getElementById('center-reset-btn');
+const playIcon = document.getElementById('center-play-icon');
+const pauseIcon = document.getElementById('center-pause-icon');
+const timerStatus = document.getElementById('center-status-label');
+
+const centerProgressFill = document.getElementById('center-progress-fill');
+const centerPercentage = document.getElementById('center-percentage');
 
 // Settings Modal & Customizer Elements
 const openSettingsBtn = document.getElementById('open-settings-btn');
@@ -45,13 +44,7 @@ let isRunning = false;
 let timerInterval = null;
 let expectedEndTime = null;
 
-// Progress Ring Configuration
-// Circumference = 2 * pi * r = 2 * 3.14159 * 135 = 848.23
-const CIRCUMFERENCE = 848.23;
 
-// Initialize circle properties
-progressCircle.style.strokeDasharray = CIRCUMFERENCE;
-progressCircle.style.strokeDashoffset = 0;
 
 /**
  * Format time in seconds to MM:SS string
@@ -71,16 +64,13 @@ function formatTime(timeInSeconds) {
 function updateDisplay(timeInSeconds) {
   // Update time text
   const timeString = formatTime(timeInSeconds);
-  timeDisplay.textContent = timeString;
+  if (timeDisplay) timeDisplay.textContent = timeString;
   
   // Update browser tab title
   const modeLabel = currentMode === 'work' ? 'Work' : 'Break';
   document.title = `[${timeString}] - ${modeLabel} Timer`;
 
-  // Calculate and update circle progress offset
   const progressRatio = timeInSeconds / timeTotal;
-  const offset = CIRCUMFERENCE - (progressRatio * CIRCUMFERENCE);
-  progressCircle.style.strokeDashoffset = offset;
 
   // Synchronize top notch clock elements
   if (notchCollapsedTime) notchCollapsedTime.textContent = timeString;
@@ -90,6 +80,10 @@ function updateDisplay(timeInSeconds) {
   const elapsedPercent = Math.min(100, Math.max(0, Math.round((1 - progressRatio) * 100)));
   if (notchPercentage) notchPercentage.textContent = `${elapsedPercent}%`;
   if (notchProgressFill) notchProgressFill.style.width = `${elapsedPercent}%`;
+
+  // Calculate and synchronize center large progress indicators (elapsed time)
+  if (centerPercentage) centerPercentage.textContent = `${elapsedPercent}%`;
+  if (centerProgressFill) centerProgressFill.style.width = `${elapsedPercent}%`;
 }
 
 /**
@@ -118,10 +112,9 @@ function startTimer() {
   expectedEndTime = Date.now() + timeLeft * 1000;
   
   // Update UI controls state
-  playIcon.classList.add('hidden');
-  pauseIcon.classList.remove('hidden');
-  startPauseLabel.textContent = 'Pause';
-  startPauseBtn.setAttribute('aria-label', 'Pause Timer');
+  if (playIcon) playIcon.classList.add('hidden');
+  if (pauseIcon) pauseIcon.classList.remove('hidden');
+  if (startPauseBtn) startPauseBtn.setAttribute('aria-label', 'Pause Timer');
 
   // Update notch control icon (show pause symbol)
   if (notchStartBtn) {
@@ -147,10 +140,9 @@ function pauseTimer() {
   timerInterval = null;
   
   // Update UI controls state
-  playIcon.classList.remove('hidden');
-  pauseIcon.classList.add('hidden');
-  startPauseLabel.textContent = 'Start';
-  startPauseBtn.setAttribute('aria-label', 'Start Timer');
+  if (playIcon) playIcon.classList.remove('hidden');
+  if (pauseIcon) pauseIcon.classList.add('hidden');
+  if (startPauseBtn) startPauseBtn.setAttribute('aria-label', 'Start Timer');
 
   // Update notch control icon (show play symbol)
   if (notchStartBtn) {
@@ -431,6 +423,29 @@ cafeVolumeSlider.addEventListener('input', (e) => {
 rainPlayBtn.addEventListener('click', toggleRain);
 cafePlayBtn.addEventListener('click', toggleCafe);
 
+// Live Header Clock
+function updateHeaderClock() {
+  const timeEl = document.getElementById('header-time');
+  const dateEl = document.getElementById('header-date');
+  if (!timeEl || !dateEl) return;
+  
+  const now = new Date();
+  
+  // Format Time (e.g., "12:34 PM")
+  let hours = now.getHours();
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  timeEl.textContent = `${hours}:${minutes} ${ampm}`;
+  
+  // Format Date (e.g., "Mon, Jul 20")
+  const options = { weekday: 'short', month: 'short', day: 'numeric' };
+  dateEl.textContent = now.toLocaleDateString('en-US', options);
+}
+
 // Initial Load UI Setup
 document.body.classList.add('theme-space'); // Default theme
 updateDisplay(timeLeft);
+updateHeaderClock();
+setInterval(updateHeaderClock, 1000);

@@ -53,58 +53,46 @@
     </div>
 
     <header class="app-header">
-      <div class="header-main-row">
-        <h1>Pomodoro</h1>
-        <button class="settings-btn" id="open-settings-btn" aria-label="Open Settings">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="3"></circle>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      <div class="datetimeWrapper" id="header-datetime">
+        <div class="row" id="header-time">12:00 PM</div>
+        <div class="rowDate" id="header-date">Mon, Jan 1</div>
+      </div>
+      
+      <div class="todayStatsWrapper" id="header-stats">
+        <p class="title">Today's Focus</p>
+        <p class="subtitle" id="header-focus-hours">0.0 hours</p>
+      </div>
+    </header>
+
+    <!-- Floating Center Immersive Timer -->
+    <section class="containerLarge" id="center-timer-container">
+      <h3 class="timerStatus" id="center-status-label">Work Session</h3>
+      <p class="time-large" id="center-time-display">25:00</p>
+      
+      <!-- Linear Progress Bar -->
+      <div class="timerProgressRow">
+        <div class="inner-bar-large">
+          <div class="current-progress-large" id="center-progress-fill" style="width: 0%;"></div>
+        </div>
+        <span class="percentage-large" id="center-percentage">0%</span>
+      </div>
+      
+      <!-- Hover controls -->
+      <div class="btnRow">
+        <button class="timeOpsBtn" id="center-start-btn" aria-label="Toggle Countdown">
+          <svg viewBox="0 0 24 24" fill="currentColor" class="svgIcon" id="center-play-icon">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+          <svg viewBox="0 0 24 24" fill="currentColor" class="svgIcon hidden" id="center-pause-icon">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+          </svg>
+        </button>
+        <button class="timeOpsBtn" id="center-reset-btn" aria-label="Reset Countdown">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="svgIcon">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
           </svg>
         </button>
       </div>
-      <p class="app-subtitle">Stay focused, stay productive</p>
-    </header>
-
-    <!-- Session Toggles -->
-    <nav class="session-toggles" aria-label="Session Mode Selection">
-      <button class="toggle-btn active" id="work-btn" data-mode="work">Work</button>
-      <button class="toggle-btn" id="break-btn" data-mode="break">Break</button>
-    </nav>
-
-    <!-- Timer Circle Display -->
-    <section class="timer-container" aria-live="polite">
-      <div class="progress-ring-wrapper">
-        <svg class="progress-ring" viewBox="0 0 300 300">
-          <!-- Background circle track -->
-          <circle class="progress-ring__track" cx="150" cy="150" r="135" stroke-width="10" fill="none" />
-          <!-- Animated front circle progress indicator -->
-          <circle class="progress-ring__progress" cx="150" cy="150" r="135" stroke-width="10" fill="none" id="progress-circle" />
-        </svg>
-        <div class="timer-text-content">
-          <span class="timer-display" id="time-display">25:00</span>
-          <span class="timer-status" id="timer-status">Work Session</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Controls Buttons -->
-    <section class="controls-container">
-      <button class="control-btn primary" id="start-pause-btn" aria-label="Start Timer">
-        <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor" id="play-icon">
-          <path d="M8 5v14l11-7z" />
-        </svg>
-        <svg class="icon-pause hidden" viewBox="0 0 24 24" fill="currentColor" id="pause-icon">
-          <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-        </svg>
-        <span id="start-pause-label">Start</span>
-      </button>
-
-      <button class="control-btn secondary" id="reset-btn" aria-label="Reset Timer">
-        <svg class="icon-reset" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
-        </svg>
-        <span>Reset</span>
-      </button>
     </section>
 
     <!-- Customizer Divider -->
