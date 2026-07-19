@@ -19,6 +19,12 @@ const workDurationInput = document.getElementById('work-duration');
 const breakDurationInput = document.getElementById('break-duration');
 const themeOptionBtns = document.querySelectorAll('.theme-option-btn');
 
+// Audio Mixer Elements
+const rainPlayBtn = document.getElementById('rain-play-btn');
+const rainVolumeSlider = document.getElementById('rain-volume');
+const cafePlayBtn = document.getElementById('cafe-play-btn');
+const cafeVolumeSlider = document.getElementById('cafe-volume');
+
 // Timer State Configuration
 let WORK_TIME = 25 * 60; // 25 minutes in seconds
 let BREAK_TIME = 5 * 60;  // 5 minutes in seconds
@@ -295,6 +301,63 @@ themeOptionBtns.forEach(btn => {
     changeTheme(theme);
   });
 });
+
+// Ambient Audio Mixer State & Logic
+let rainAudio = null;
+let cafeAudio = null;
+
+function toggleRain() {
+  if (!rainAudio) {
+    rainAudio = new Audio('https://www.soundjay.com/nature/sounds/rain-07.mp3');
+    rainAudio.loop = true;
+    rainAudio.volume = parseFloat(rainVolumeSlider.value);
+  }
+  
+  if (rainAudio.paused) {
+    rainAudio.play().catch(err => console.warn('Audio play block:', err));
+    rainPlayBtn.textContent = 'Pause';
+    rainPlayBtn.classList.add('playing');
+    rainVolumeSlider.removeAttribute('disabled');
+  } else {
+    rainAudio.pause();
+    rainPlayBtn.textContent = 'Play';
+    rainPlayBtn.classList.remove('playing');
+    rainVolumeSlider.setAttribute('disabled', 'true');
+  }
+}
+
+function toggleCafe() {
+  if (!cafeAudio) {
+    cafeAudio = new Audio('https://www.soundjay.com/misc/sounds/coffee-shop-1.mp3');
+    cafeAudio.loop = true;
+    cafeAudio.volume = parseFloat(cafeVolumeSlider.value);
+  }
+  
+  if (cafeAudio.paused) {
+    cafeAudio.play().catch(err => console.warn('Audio play block:', err));
+    cafePlayBtn.textContent = 'Pause';
+    cafePlayBtn.classList.add('playing');
+    cafeVolumeSlider.removeAttribute('disabled');
+  } else {
+    cafeAudio.pause();
+    cafePlayBtn.textContent = 'Play';
+    cafePlayBtn.classList.remove('playing');
+    cafeVolumeSlider.setAttribute('disabled', 'true');
+  }
+}
+
+// Audio volume event bindings
+rainVolumeSlider.addEventListener('input', (e) => {
+  if (rainAudio) rainAudio.volume = parseFloat(e.target.value);
+});
+
+cafeVolumeSlider.addEventListener('input', (e) => {
+  if (cafeAudio) cafeAudio.volume = parseFloat(e.target.value);
+});
+
+// Bind audio buttons
+rainPlayBtn.addEventListener('click', toggleRain);
+cafePlayBtn.addEventListener('click', toggleCafe);
 
 // Initial Load UI Setup
 document.body.classList.add('theme-space'); // Default theme
