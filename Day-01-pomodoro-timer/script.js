@@ -347,16 +347,18 @@ if (notchResetBtn) notchResetBtn.addEventListener('click', resetTimer);
 if (workBtn) workBtn.addEventListener('click', () => switchMode('work'));
 if (breakBtn) breakBtn.addEventListener('click', () => switchMode('break'));
 
-openSettingsBtn.addEventListener('click', openSettings);
-closeSettingsBtn.addEventListener('click', closeSettings);
-settingsForm.addEventListener('submit', saveSettings);
+if (openSettingsBtn) openSettingsBtn.addEventListener('click', openSettings);
+if (closeSettingsBtn) closeSettingsBtn.addEventListener('click', closeSettings);
+if (settingsForm) settingsForm.addEventListener('submit', saveSettings);
 
 // Close modal when clicking outside of it
-settingsModal.addEventListener('click', (e) => {
-  if (e.target === settingsModal) {
-    closeSettings();
-  }
-});
+if (settingsModal) {
+  settingsModal.addEventListener('click', (e) => {
+    if (e.target === settingsModal) {
+      closeSettings();
+    }
+  });
+}
 
 // Setup Themes
 themeOptionBtns.forEach(btn => {
