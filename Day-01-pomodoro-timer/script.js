@@ -25,6 +25,15 @@ const rainVolumeSlider = document.getElementById('rain-volume');
 const cafePlayBtn = document.getElementById('cafe-play-btn');
 const cafeVolumeSlider = document.getElementById('cafe-volume');
 
+// Top Notch Elements
+const notchCollapsedTime = document.getElementById('notch-collapsed-time');
+const notchExpandedTime = document.getElementById('notch-expanded-time');
+const notchStatusLabel = document.getElementById('notch-status-label');
+const notchProgressFill = document.getElementById('notch-progress-fill');
+const notchPercentage = document.getElementById('notch-percentage');
+const notchStartBtn = document.getElementById('notch-start-btn');
+const notchResetBtn = document.getElementById('notch-reset-btn');
+
 // Timer State Configuration
 let WORK_TIME = 25 * 60; // 25 minutes in seconds
 let BREAK_TIME = 5 * 60;  // 5 minutes in seconds
@@ -72,6 +81,15 @@ function updateDisplay(timeInSeconds) {
   const progressRatio = timeInSeconds / timeTotal;
   const offset = CIRCUMFERENCE - (progressRatio * CIRCUMFERENCE);
   progressCircle.style.strokeDashoffset = offset;
+
+  // Synchronize top notch clock elements
+  if (notchCollapsedTime) notchCollapsedTime.textContent = timeString;
+  if (notchExpandedTime) notchExpandedTime.textContent = timeString;
+
+  // Calculate and synchronize notch progress indicators (elapsed time)
+  const elapsedPercent = Math.min(100, Math.max(0, Math.round((1 - progressRatio) * 100)));
+  if (notchPercentage) notchPercentage.textContent = `${elapsedPercent}%`;
+  if (notchProgressFill) notchProgressFill.style.width = `${elapsedPercent}%`;
 }
 
 /**
@@ -105,6 +123,14 @@ function startTimer() {
   startPauseLabel.textContent = 'Pause';
   startPauseBtn.setAttribute('aria-label', 'Pause Timer');
 
+  // Update notch control icon (show pause symbol)
+  if (notchStartBtn) {
+    notchStartBtn.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+      </svg>`;
+  }
+
   // Trigger tick immediately, then set interval
   tick();
   timerInterval = setInterval(tick, 200); // Poll frequently to ensure UI sync
@@ -125,6 +151,14 @@ function pauseTimer() {
   pauseIcon.classList.add('hidden');
   startPauseLabel.textContent = 'Start';
   startPauseBtn.setAttribute('aria-label', 'Start Timer');
+
+  // Update notch control icon (show play symbol)
+  if (notchStartBtn) {
+    notchStartBtn.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M8 5v14l11-7z" />
+      </svg>`;
+  }
 }
 
 /**
@@ -161,6 +195,7 @@ function switchMode(mode) {
     workBtn.classList.add('active');
     breakBtn.classList.remove('active');
     timerStatus.textContent = 'Work Session';
+    if (notchStatusLabel) notchStatusLabel.textContent = 'Work Session';
     
     // Set theme colors to Work mode (Coral/Red)
     document.documentElement.style.setProperty('--color-accent', '#f87171');
@@ -171,6 +206,7 @@ function switchMode(mode) {
     workBtn.classList.remove('active');
     breakBtn.classList.add('active');
     timerStatus.textContent = 'Break Session';
+    if (notchStatusLabel) notchStatusLabel.textContent = 'Break Session';
     
     // Set theme colors to Break mode (Emerald/Green)
     document.documentElement.style.setProperty('--color-accent', '#34d399');
@@ -314,6 +350,8 @@ function changeTheme(themeName) {
 // Event Listeners
 startPauseBtn.addEventListener('click', handleStartPause);
 resetBtn.addEventListener('click', resetTimer);
+if (notchStartBtn) notchStartBtn.addEventListener('click', handleStartPause);
+if (notchResetBtn) notchResetBtn.addEventListener('click', resetTimer);
 workBtn.addEventListener('click', () => switchMode('work'));
 breakBtn.addEventListener('click', () => switchMode('break'));
 

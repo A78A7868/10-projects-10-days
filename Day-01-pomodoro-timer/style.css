@@ -610,3 +610,169 @@ body.theme-rain .rain-container {
     transform: translateY(110vh);
   }
 }
+
+/* Expandable Notch Styles */
+.containerSmall {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Karla', sans-serif;
+  color: #fff;
+  height: 70px;
+  width: 300px;
+  z-index: 1000;
+  user-select: none;
+}
+
+.notch {
+  width: 150px;
+  height: 25px; /* Collapsed height */
+  margin-top: 0;
+  background-color: #000;
+  border-radius: 0 0 20px 20px;
+  transition: all 0.4s ease-in-out;
+  box-shadow: 0 0.7px 1.7px -9px rgba(0, 0, 0, 0.448),
+              0 2.2px 5.8px -9px rgba(0, 0, 0, 0.584),
+              0 10px 26px -9px rgba(0, 0, 0, 0.88);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 4px 10px;
+}
+
+.containerSmall:hover .notch {
+  width: 280px;
+  height: 120px; /* Expanded height */
+  background-color: #0d0d0d;
+}
+
+/* Tiny Clock - Collapsed State */
+p.time {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-accent);
+  text-align: center;
+  font-feature-settings: "tnum";
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.containerSmall:hover p.time {
+  opacity: 0;
+  transform: translateY(-20px);
+  pointer-events: none;
+}
+
+/* Notch Expanded View */
+.notch-expanded-content {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease-in-out;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: -12px; /* Pull content up since collapsed p.time shifts out */
+}
+
+.containerSmall:hover .notch-expanded-content {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.timerProgressRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 10px;
+}
+
+.expandedTitle {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}
+
+.expandedTitle .title {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: hsla(0, 0%, 100%, 0.5);
+  margin-bottom: 2px;
+}
+
+.timeExpanded {
+  font-size: 24px;
+  font-weight: 700;
+  font-feature-settings: "tnum";
+  line-height: 1;
+  color: #fff;
+}
+
+.percentage {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-accent);
+  text-shadow: 0 0 10px var(--color-accent-glow);
+}
+
+/* Progress bar inside notch */
+.progress-bar-wrapper {
+  width: 100%;
+  padding: 0 10px;
+  margin-top: 8px;
+}
+
+.inner-bar {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  height: 4px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.current-progress {
+  background: var(--color-accent);
+  box-shadow: 0 0 4px var(--color-accent);
+  border-radius: 5px;
+  height: 100%;
+  width: 0;
+  transition: width 0.2s linear;
+}
+
+/* Control buttons inside notch */
+.button-wrapper {
+  display: flex;
+  gap: 16px;
+  margin-top: 10px;
+  justify-content: center;
+}
+
+.notch-control-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: hsla(0, 0%, 100%, 0.6);
+  transition: color 0.2s, transform 0.2s;
+}
+
+.notch-control-btn:hover {
+  color: var(--color-accent);
+  transform: scale(1.15);
+}
+
+.notch-control-btn svg {
+  width: 16px;
+  height: 16px;
+}

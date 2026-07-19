@@ -13,6 +13,45 @@
 <body>
   <div class="rain-container" id="rain-container"></div>
   <main class="app-container">
+    <!-- Expandable Top Notch Timer -->
+    <div class="containerSmall" id="notch-container">
+      <div class="notch">
+        <!-- Tiny timer shown when collapsed -->
+        <p class="time" id="notch-collapsed-time">25:00</p>
+        
+        <!-- Expanded dashboard panel shown on hover -->
+        <div class="notch-expanded-content">
+          <div class="timerProgressRow">
+            <div class="expandedTitle">
+              <div class="title" id="notch-status-label">Work Session</div>
+              <div class="timeExpanded" id="notch-expanded-time">25:00</div>
+            </div>
+            <span class="percentage" id="notch-percentage">0%</span>
+          </div>
+          
+          <div class="progress-bar-wrapper">
+            <div class="inner-bar">
+              <div class="current-progress" id="notch-progress-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+          
+          <div class="button-wrapper">
+            <!-- Small controls -->
+            <button class="notch-control-btn" id="notch-start-btn" aria-label="Toggle Timer">
+              <svg viewBox="0 0 24 24" fill="currentColor" class="notch-icon-play">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </button>
+            <button class="notch-control-btn" id="notch-reset-btn" aria-label="Reset Timer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="notch-icon-reset">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <header class="app-header">
       <div class="header-main-row">
         <h1>Pomodoro</h1>
