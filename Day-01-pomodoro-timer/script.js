@@ -10,9 +10,18 @@ const timerStatus = document.getElementById('timer-status');
 const workBtn = document.getElementById('work-btn');
 const breakBtn = document.getElementById('break-btn');
 
+// Settings Modal & Customizer Elements
+const openSettingsBtn = document.getElementById('open-settings-btn');
+const closeSettingsBtn = document.getElementById('close-settings-btn');
+const settingsModal = document.getElementById('settings-modal');
+const settingsForm = document.getElementById('settings-form');
+const workDurationInput = document.getElementById('work-duration');
+const breakDurationInput = document.getElementById('break-duration');
+const themeOptionBtns = document.querySelectorAll('.theme-option-btn');
+
 // Timer State Configuration
-const WORK_TIME = 25 * 60; // 25 minutes in seconds
-const BREAK_TIME = 5 * 60;  // 5 minutes in seconds
+let WORK_TIME = 25 * 60; // 25 minutes in seconds
+let BREAK_TIME = 5 * 60;  // 5 minutes in seconds
 
 let currentMode = 'work'; // 'work' or 'break'
 let timeTotal = WORK_TIME;
@@ -214,11 +223,79 @@ function handleSessionComplete() {
   switchMode(nextMode);
 }
 
+// Modal Settings Handlers
+function openSettings() {
+  workDurationInput.value = Math.floor(WORK_TIME / 60);
+  breakDurationInput.value = Math.floor(BREAK_TIME / 60);
+  settingsModal.classList.remove('hidden');
+}
+
+function closeSettings() {
+  settingsModal.classList.add('hidden');
+}
+
+function saveSettings(e) {
+  e.preventDefault();
+  
+  const newWorkMin = parseInt(workDurationInput.value, 10);
+  const newBreakMin = parseInt(breakDurationInput.value, 10);
+  
+  if (isNaN(newWorkMin) || newWorkMin < 1 || isNaN(newBreakMin) || newBreakMin < 1) {
+    alert('Please enter valid positive numbers for intervals.');
+    return;
+  }
+  
+  WORK_TIME = newWorkMin * 60;
+  BREAK_TIME = newBreakMin * 60;
+  
+  // Recalculate based on current mode
+  timeTotal = currentMode === 'work' ? WORK_TIME : BREAK_TIME;
+  
+  resetTimer();
+  closeSettings();
+}
+
+// Background Theme Handler
+function changeTheme(themeName) {
+  // Update active button state
+  themeOptionBtns.forEach(btn => {
+    if (btn.getAttribute('data-theme') === themeName) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+  
+  // Update body classes
+  document.body.className = ''; // reset classes
+  document.body.classList.add(`theme-${themeName}`);
+}
+
 // Event Listeners
 startPauseBtn.addEventListener('click', handleStartPause);
 resetBtn.addEventListener('click', resetTimer);
 workBtn.addEventListener('click', () => switchMode('work'));
 breakBtn.addEventListener('click', () => switchMode('break'));
 
+openSettingsBtn.addEventListener('click', openSettings);
+closeSettingsBtn.addEventListener('click', closeSettings);
+settingsForm.addEventListener('submit', saveSettings);
+
+// Close modal when clicking outside of it
+settingsModal.addEventListener('click', (e) => {
+  if (e.target === settingsModal) {
+    closeSettings();
+  }
+});
+
+// Setup Themes
+themeOptionBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const theme = btn.getAttribute('data-theme');
+    changeTheme(theme);
+  });
+});
+
 // Initial Load UI Setup
+document.body.classList.add('theme-space'); // Default theme
 updateDisplay(timeLeft);
