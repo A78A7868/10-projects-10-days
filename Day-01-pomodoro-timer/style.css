@@ -574,3 +574,39 @@ body.theme-rain {
   opacity: 0.3;
   pointer-events: none;
 }
+
+/* Rain Effect Overlay */
+.rain-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1; /* In front of backgrounds, behind widgets */
+  display: none;
+}
+
+body.theme-rain .rain-container {
+  display: block;
+}
+
+.rain-drop {
+  position: absolute;
+  background: linear-gradient(transparent, rgba(174, 219, 255, 0.45));
+  width: 1.5px;
+  height: 60px;
+  opacity: 0.6;
+  animation: rain-fall linear infinite;
+  pointer-events: none;
+}
+
+@keyframes rain-fall {
+  0% {
+    transform: translateY(-80px);
+  }
+  100% {
+    transform: translateY(110vh);
+  }
+}

@@ -262,6 +262,31 @@ function saveSettings(e) {
 }
 
 // Background Theme Handler
+function generateRain() {
+  const container = document.getElementById('rain-container');
+  if (!container) return;
+  
+  container.innerHTML = '';
+  const dropCount = 80;
+  
+  for (let i = 0; i < dropCount; i++) {
+    const drop = document.createElement('div');
+    drop.classList.add('rain-drop');
+    
+    const left = Math.random() * 100;
+    const duration = 0.5 + Math.random() * 0.7;
+    const delay = Math.random() * 1.5;
+    const opacity = 0.2 + Math.random() * 0.5;
+    
+    drop.style.left = `${left}%`;
+    drop.style.animationDuration = `${duration}s`;
+    drop.style.animationDelay = `${delay}s`;
+    drop.style.opacity = opacity;
+    
+    container.appendChild(drop);
+  }
+}
+
 function changeTheme(themeName) {
   // Update active button state
   themeOptionBtns.forEach(btn => {
@@ -275,6 +300,15 @@ function changeTheme(themeName) {
   // Update body classes
   document.body.className = ''; // reset classes
   document.body.classList.add(`theme-${themeName}`);
+  
+  // Manage Rain Overlay
+  const container = document.getElementById('rain-container');
+  if (container) {
+    container.innerHTML = '';
+    if (themeName === 'rain') {
+      generateRain();
+    }
+  }
 }
 
 // Event Listeners
