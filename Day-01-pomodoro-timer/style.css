@@ -940,3 +940,275 @@ p.time {
   width: 16px;
   height: 16px;
 }
+
+/* Floating Widgets Container Styling */
+.floating-widget {
+  position: absolute;
+  background: rgba(10, 10, 10, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px) saturate(120%);
+  -webkit-backdrop-filter: blur(20px) saturate(120%);
+  border-radius: 16px;
+  width: 280px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5),
+              0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  z-index: 100;
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+              height 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.3s ease;
+}
+
+.floating-widget:hover {
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.65),
+              0 0 15px rgba(255, 255, 255, 0.03);
+}
+
+.widget-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: grab;
+  user-select: none;
+}
+
+.widget-header.grabbing {
+  cursor: grabbing;
+}
+
+.widget-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Karla', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  opacity: 0.85;
+}
+
+.widget-header-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.widget-collapse-btn {
+  background: none;
+  border: none;
+  color: hsla(0, 0%, 100%, 0.5);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.widget-collapse-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.widget-collapse-icon {
+  width: 12px;
+  height: 12px;
+}
+
+.widget-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Spotify Player Widget Specifics */
+.spotify-widget.expanded {
+  width: 320px;
+}
+
+.spotify-input-container {
+  display: flex;
+  gap: 8px;
+}
+
+.spotify-input-container input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 6px 12px;
+  color: #fff;
+  font-size: 11px;
+  font-family: 'Karla', sans-serif;
+}
+
+.spotify-input-container input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.spotify-input-container button {
+  background: var(--color-accent);
+  color: #282a36;
+  border: none;
+  font-weight: 700;
+  font-family: 'Karla', sans-serif;
+  font-size: 11px;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.spotify-input-container button:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
+
+.spotify-iframe-wrapper {
+  border-radius: 8px;
+  overflow: hidden;
+  height: 220px;
+}
+
+/* Checklist Widget Specifics */
+.checklist-count {
+  font-family: 'Karla', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.08);
+  color: hsla(0, 0%, 100%, 0.7);
+  padding: 2px 6px;
+  border-radius: 8px;
+}
+
+.checklist-progress-bar {
+  background: rgba(255, 255, 255, 0.08);
+  height: 4px;
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.checklist-progress-fill {
+  background: var(--color-accent);
+  height: 100%;
+  width: 0;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 8px var(--color-accent);
+}
+
+.checklist-items {
+  max-height: 180px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 4px;
+}
+
+/* Custom Scrollbar for Checklist */
+.checklist-items::-webkit-scrollbar {
+  width: 4px;
+}
+.checklist-items::-webkit-scrollbar-track {
+  background: transparent;
+}
+.checklist-items::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Karla', sans-serif;
+  font-size: 12px;
+  color: #fff;
+  opacity: 0.9;
+  transition: opacity 0.2s ease;
+}
+
+.checklist-item.completed {
+  opacity: 0.5;
+}
+
+.checklist-item.completed span {
+  text-decoration: line-through;
+}
+
+.checklist-item input[type="checkbox"] {
+  accent-color: var(--color-accent);
+  cursor: pointer;
+  width: 14px;
+  height: 14px;
+}
+
+.checklist-item-text {
+  flex: 1;
+}
+
+.checklist-delete-btn {
+  background: none;
+  border: none;
+  color: hsla(0, 0%, 100%, 0.4);
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: 14px;
+  transition: color 0.2s;
+}
+
+.checklist-delete-btn:hover {
+  color: #ef4444;
+}
+
+.checklist-add-form {
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 12px;
+  margin-top: 4px;
+}
+
+.checklist-add-form input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 6px 12px;
+  color: #fff;
+  font-size: 11px;
+  font-family: 'Karla', sans-serif;
+}
+
+.checklist-add-form input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.checklist-add-form button {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.checklist-add-form button:hover {
+  background: var(--color-accent);
+  color: #282a36;
+  border-color: var(--color-accent);
+}

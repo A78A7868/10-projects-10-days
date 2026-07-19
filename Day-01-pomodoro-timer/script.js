@@ -444,8 +444,211 @@ function updateHeaderClock() {
   dateEl.textContent = now.toLocaleDateString('en-US', options);
 }
 
+// Draggable Widget Utility
+function makeDraggable(elementId) {
+  const element = document.getElementById(elementId);
+  if (!element) return;
+  
+  const handle = element.querySelector('.drag-handle');
+  if (!handle) return;
+  
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  
+  handle.onmousedown = dragMouseDown;
+  handle.ontouchstart = dragMouseDown;
+  
+  function dragMouseDown(e) {
+    e = e || window.event;
+    // Don't drag if clicking buttons
+    if (e.target.closest('button') || e.target.closest('input') || e.target.closest('iframe')) return;
+    
+    // Touch event compatibility
+    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+    const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+    
+    pos3 = clientX;
+    pos4 = clientY;
+    
+    document.onmouseup = closeDragElement;
+    document.ontouchend = closeDragElement;
+    
+    document.onmousemove = elementDrag;
+    document.ontouchmove = elementDrag;
+    
+    handle.classList.add('grabbing');
+  }
+  
+  function elementDrag(e) {
+    e = e || window.event;
+    
+    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+    const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+    
+    pos1 = pos3 - clientX;
+    pos2 = pos4 - clientY;
+    pos3 = clientX;
+    pos4 = clientY;
+    
+    // Calculate new coordinates
+    let newTop = element.offsetTop - pos2;
+    let newLeft = element.offsetLeft - pos1;
+    
+    // Viewport bounds clamping
+    const maxLeft = window.innerWidth - element.offsetWidth;
+    const maxTop = window.innerHeight - element.offsetHeight;
+    
+    newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+    newTop = Math.max(0, Math.min(newTop, maxTop));
+    
+    element.style.top = newTop + "px";
+    element.style.left = newLeft + "px";
+  }
+  
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+    document.ontouchend = null;
+    document.ontouchmove = null;
+    handle.classList.remove('grabbing');
+  }
+}
+
+// Spotify Widget Setup
+const spotifyWidget = document.getElementById('spotify-player-widget');
+const spotifyToggle = document.getElementById('spotify-expand-toggle');
+const spotifyUrlInput = document.getElementById('spotify-playlist-url');
+const spotifyLoadBtn = document.getElementById('spotify-load-btn');
+const spotifyIframe = document.getElementById('spotify-iframe');
+
+if (spotifyToggle && spotifyWidget) {
+  spotifyToggle.addEventListener('click', () => {
+    spotifyWidget.classList.toggle('expanded');
+  });
+}
+
+if (spotifyLoadBtn && spotifyUrlInput && spotifyIframe) {
+  spotifyLoadBtn.addEventListener('click', () => {
+    const url = spotifyUrlInput.value.trim();
+    if (!url) return;
+    
+    try {
+      const u = new URL(url);
+      const path = u.pathname;
+      if (path.includes('/playlist/') || path.includes('/album/') || path.includes('/track/') || path.includes('/artist/')) {
+        spotifyIframe.src = `https://open.spotify.com/embed${path}`;
+      } else {
+        alert('Please enter a valid Spotify Playlist, Album, or Track URL.');
+      }
+    } catch (e) {
+      alert('Please enter a valid Spotify URL.');
+    }
+  });
+}
+
+// Checklist Widget Setup
+let tasks = JSON.parse(localStorage.getItem('pomodoro-tasks')) || [
+  { id: 1, text: 'Complete focus session', completed: false },
+  { id: 2, text: 'Drink a glass of water', completed: false }
+];
+
+const checklistContainer = document.getElementById('checklist-items-container');
+const checklistForm = document.getElementById('checklist-add-form');
+const checklistInput = document.getElementById('checklist-new-task');
+const checklistProgressText = document.getElementById('checklist-progress-text');
+const checklistProgressFill = document.getElementById('checklist-progress-fill');
+
+function saveTasks() {
+  localStorage.setItem('pomodoro-tasks', JSON.stringify(tasks));
+  renderChecklist();
+}
+
+function renderChecklist() {
+  if (!checklistContainer) return;
+  checklistContainer.innerHTML = '';
+  
+  if (tasks.length === 0) {
+    checklistContainer.innerHTML = `<div style="font-family: Karla; font-size: 11px; opacity: 0.5; padding: 10px 0; text-align: center;">No tasks listed. Add one below!</div>`;
+    if (checklistProgressText) checklistProgressText.textContent = '0/0';
+    if (checklistProgressFill) checklistProgressFill.style.width = '0%';
+    return;
+  }
+  
+  let completedCount = 0;
+  
+  tasks.forEach(task => {
+    if (task.completed) completedCount++;
+    
+    const item = document.createElement('div');
+    item.classList.add('checklist-item');
+    if (task.completed) item.classList.add('completed');
+    
+    item.innerHTML = `
+      <input type="checkbox" ${task.completed ? 'checked' : ''} data-id="${task.id}" />
+      <span class="checklist-item-text">${escapeHtml(task.text)}</span>
+      <button class="checklist-delete-btn" data-id="${task.id}">&times;</button>
+    `;
+    
+    checklistContainer.appendChild(item);
+  });
+  
+  // Update Checklist progress
+  const total = tasks.length;
+  if (checklistProgressText) checklistProgressText.textContent = `${completedCount}/${total}`;
+  
+  const percentage = Math.round((completedCount / total) * 100);
+  if (checklistProgressFill) checklistProgressFill.style.width = `${percentage}%`;
+  
+  // Bind events
+  checklistContainer.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', (e) => {
+      const id = parseInt(e.target.getAttribute('data-id'));
+      const task = tasks.find(t => t.id === id);
+      if (task) {
+        task.completed = e.target.checked;
+        saveTasks();
+      }
+    });
+  });
+  
+  checklistContainer.querySelectorAll('.checklist-delete-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const id = parseInt(e.target.getAttribute('data-id'));
+      tasks = tasks.filter(t => t.id !== id);
+      saveTasks();
+    });
+  });
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+if (checklistForm) {
+  checklistForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = checklistInput.value.trim();
+    if (!text) return;
+    
+    tasks.push({
+      id: Date.now(),
+      text: text,
+      completed: false
+    });
+    
+    checklistInput.value = '';
+    saveTasks();
+  });
+}
+
 // Initial Load UI Setup
 document.body.classList.add('theme-space'); // Default theme
 updateDisplay(timeLeft);
 updateHeaderClock();
 setInterval(updateHeaderClock, 1000);
+
+// Initialize Draggables & Tasks
+makeDraggable('spotify-player-widget');
+makeDraggable('checklist-tasks-widget');
+renderChecklist();
