@@ -184,8 +184,8 @@ function switchMode(mode) {
   
   // Update button active state
   if (currentMode === 'work') {
-    workBtn.classList.add('active');
-    breakBtn.classList.remove('active');
+    if (workBtn) workBtn.classList.add('active');
+    if (breakBtn) breakBtn.classList.remove('active');
     timerStatus.textContent = 'Work Session';
     if (notchStatusLabel) notchStatusLabel.textContent = 'Work Session';
     
@@ -195,8 +195,8 @@ function switchMode(mode) {
     
     timeTotal = WORK_TIME;
   } else {
-    workBtn.classList.remove('active');
-    breakBtn.classList.add('active');
+    if (workBtn) workBtn.classList.remove('active');
+    if (breakBtn) breakBtn.classList.add('active');
     timerStatus.textContent = 'Break Session';
     if (notchStatusLabel) notchStatusLabel.textContent = 'Break Session';
     
@@ -344,8 +344,8 @@ startPauseBtn.addEventListener('click', handleStartPause);
 resetBtn.addEventListener('click', resetTimer);
 if (notchStartBtn) notchStartBtn.addEventListener('click', handleStartPause);
 if (notchResetBtn) notchResetBtn.addEventListener('click', resetTimer);
-workBtn.addEventListener('click', () => switchMode('work'));
-breakBtn.addEventListener('click', () => switchMode('break'));
+if (workBtn) workBtn.addEventListener('click', () => switchMode('work'));
+if (breakBtn) breakBtn.addEventListener('click', () => switchMode('break'));
 
 openSettingsBtn.addEventListener('click', openSettings);
 closeSettingsBtn.addEventListener('click', closeSettings);
@@ -652,3 +652,66 @@ setInterval(updateHeaderClock, 1000);
 makeDraggable('spotify-player-widget');
 makeDraggable('checklist-tasks-widget');
 renderChecklist();
+
+// Bottom Dock Event Listeners
+const dockModeBtn = document.getElementById('dock-mode-btn');
+const dockSpotifyBtn = document.getElementById('dock-spotify-btn');
+const dockChecklistBtn = document.getElementById('dock-checklist-btn');
+const dockViewBtn = document.getElementById('dock-view-btn');
+const dockSettingsBtn = document.getElementById('dock-settings-btn');
+const dockResetBtn = document.getElementById('dock-reset-btn');
+
+if (dockModeBtn) {
+  dockModeBtn.addEventListener('click', () => {
+    const nextMode = currentMode === 'work' ? 'break' : 'work';
+    switchMode(nextMode);
+  });
+}
+
+if (dockSpotifyBtn && spotifyWidget) {
+  dockSpotifyBtn.addEventListener('click', () => {
+    spotifyWidget.classList.toggle('hidden');
+    dockSpotifyBtn.classList.toggle('active');
+  });
+}
+
+if (dockChecklistBtn) {
+  const checklistWidgetEl = document.getElementById('checklist-tasks-widget');
+  if (checklistWidgetEl) {
+    dockChecklistBtn.addEventListener('click', () => {
+      checklistWidgetEl.classList.toggle('hidden');
+      dockChecklistBtn.classList.toggle('active');
+    });
+  }
+}
+
+if (dockViewBtn) {
+  dockViewBtn.addEventListener('click', () => {
+    const currentView = dockViewBtn.getAttribute('data-view');
+    let nextView = 'dashboard';
+    
+    // Cycle view modes
+    if (currentView === 'dashboard') {
+      nextView = 'immersive';
+      document.body.classList.add('view-immersive');
+      document.body.classList.remove('view-minimal');
+    } else if (currentView === 'immersive') {
+      nextView = 'minimal';
+      document.body.classList.add('view-minimal');
+      document.body.classList.remove('view-immersive');
+    } else {
+      nextView = 'dashboard';
+      document.body.classList.remove('view-immersive', 'view-minimal');
+    }
+    
+    dockViewBtn.setAttribute('data-view', nextView);
+  });
+}
+
+if (dockSettingsBtn) {
+  dockSettingsBtn.addEventListener('click', openSettings);
+}
+
+if (dockResetBtn) {
+  dockResetBtn.addEventListener('click', resetTimer);
+}
