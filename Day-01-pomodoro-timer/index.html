@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 01 - Pomodoro Timer</title>
+  <!-- Google Fonts for modern typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app-container">
+    <header class="app-header">
+      <h1>Pomodoro</h1>
+      <p class="app-subtitle">Stay focused, stay productive</p>
+    </header>
+
+    <!-- Session Toggles -->
+    <nav class="session-toggles" aria-label="Session Mode Selection">
+      <button class="toggle-btn active" id="work-btn" data-mode="work">Work</button>
+      <button class="toggle-btn" id="break-btn" data-mode="break">Break</button>
+    </nav>
+
+    <!-- Timer Circle Display -->
+    <section class="timer-container" aria-live="polite">
+      <div class="progress-ring-wrapper">
+        <svg class="progress-ring" viewBox="0 0 300 300">
+          <!-- Background circle track -->
+          <circle class="progress-ring__track" cx="150" cy="150" r="135" stroke-width="10" fill="none" />
+          <!-- Animated front circle progress indicator -->
+          <circle class="progress-ring__progress" cx="150" cy="150" r="135" stroke-width="10" fill="none" id="progress-circle" />
+        </svg>
+        <div class="timer-text-content">
+          <span class="timer-display" id="time-display">25:00</span>
+          <span class="timer-status" id="timer-status">Work Session</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Controls Buttons -->
+    <section class="controls-container">
+      <button class="control-btn primary" id="start-pause-btn" aria-label="Start Timer">
+        <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor" id="play-icon">
+          <path d="M8 5v14l11-7z" />
+        </svg>
+        <svg class="icon-pause hidden" viewBox="0 0 24 24" fill="currentColor" id="pause-icon">
+          <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+        </svg>
+        <span id="start-pause-label">Start</span>
+      </button>
+
+      <button class="control-btn secondary" id="reset-btn" aria-label="Reset Timer">
+        <svg class="icon-reset" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+        </svg>
+        <span>Reset</span>
+      </button>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
