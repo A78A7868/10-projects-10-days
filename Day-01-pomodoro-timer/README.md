@@ -18,6 +18,9 @@ To open the project, simply open the `index.html` file in any modern web browser
 - **Dynamic Theme Swapping**: Transition theme styles dynamically between Work mode (Coral/Red) and Break mode (Emerald/Green).
 - **Responsive Circular Progress**: SVG-based ring that matches the exact remaining timer ratio and scales smoothly on mobile viewports.
 - **Synthesized Audio Alert**: Generates a pleasant dual-tone alarm beep using the Web Audio API, eliminating the need to fetch external media files.
+- **Customizable Timer Limits**: A settings modal panel that allows users to configure custom durations for Work and Break sessions dynamically.
+- **Visual Background Themes**: Aesthetic background scene selections (Deep Space, Cozy Café, Rainy Day) utilizing smooth CSS transitions and a glassmorphic layout card.
+- **Ambient Audio Mixer**: Integrated backing ambient channels (Rainfall, Café ambience) with loop controls and independent volume slider controllers.
 
 ---
 
