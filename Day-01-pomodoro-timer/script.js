@@ -308,7 +308,7 @@ let cafeAudio = null;
 
 function toggleRain() {
   if (!rainAudio) {
-    rainAudio = new Audio('https://www.soundjay.com/nature/sounds/rain-07.mp3');
+    rainAudio = new Audio('https://raw.githubusercontent.com/bradtraversy/ambient-sound-mixer/main/audio/rain.mp3');
     rainAudio.loop = true;
     rainAudio.volume = parseFloat(rainVolumeSlider.value);
   }
@@ -328,7 +328,7 @@ function toggleRain() {
 
 function toggleCafe() {
   if (!cafeAudio) {
-    cafeAudio = new Audio('https://www.soundjay.com/misc/sounds/coffee-shop-1.mp3');
+    cafeAudio = new Audio('https://raw.githubusercontent.com/bradtraversy/ambient-sound-mixer/main/audio/cafe.mp3');
     cafeAudio.loop = true;
     cafeAudio.volume = parseFloat(cafeVolumeSlider.value);
   }
