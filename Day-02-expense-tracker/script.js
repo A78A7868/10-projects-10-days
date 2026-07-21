@@ -1,10 +1,10 @@
-// TrackFi AI Expense Tracker - Core Client Logic
+// TrackFi Expense Tracker - Client Logic
 
 // Initial Default State & Presets
 const DEFAULT_TRANSACTIONS = [
   { id: '1', merchant: 'Salary Direct Deposit', amount: 3500.00, type: 'income', category: 'Income', date: '2026-07-01', notes: 'Monthly Paycheck' },
-  { id: '2', merchant: 'Oishi Sushi Bar', amount: 48.50, type: 'expense', category: 'Dining', date: '2026-07-18', notes: 'AI Auto-Categorized' },
-  { id: '3', merchant: 'Whole Foods Market', amount: 84.20, type: 'expense', category: 'Groceries', date: '2026-07-19', notes: 'Scanned via Receipt AI' },
+  { id: '2', merchant: 'Oishi Sushi Bar', amount: 48.50, type: 'expense', category: 'Dining', date: '2026-07-18', notes: 'Auto Tagged' },
+  { id: '3', merchant: 'Whole Foods Market', amount: 84.20, type: 'expense', category: 'Groceries', date: '2026-07-19', notes: 'Scanned via Receipt Reader' },
   { id: '4', merchant: 'Uber Ride', amount: 24.50, type: 'expense', category: 'Transport', date: '2026-07-20', notes: 'Airport Transit' },
   { id: '5', merchant: 'Apple Store', amount: 129.00, type: 'expense', category: 'Electronics', date: '2026-07-20', notes: 'MagSafe Charger' }
 ];
@@ -65,7 +65,6 @@ function getCategoryConfig(category) {
 
 // Render Core Dashboard Suite
 function renderDashboard() {
-  // 1. Calculate Totals
   let incomeTotal = 0;
   let expenseTotal = 0;
   const categoryTotals = {};
@@ -83,20 +82,14 @@ function renderDashboard() {
   const netBalance = incomeTotal - expenseTotal;
   const savingsRate = incomeTotal > 0 ? Math.max(0, Math.min(100, Math.round(((incomeTotal - expenseTotal) / incomeTotal) * 100))) : 0;
 
-  // 2. Update Metric Cards
   if (totalBalanceEl) totalBalanceEl.textContent = formatCurrency(netBalance);
   if (totalIncomeEl) totalIncomeEl.textContent = formatCurrency(incomeTotal);
   if (totalExpensesEl) totalExpensesEl.textContent = formatCurrency(expenseTotal);
   if (savingsPercentEl) savingsPercentEl.textContent = `${savingsRate}%`;
   if (savingsProgressFill) savingsProgressFill.style.width = `${savingsRate}%`;
 
-  // 3. Render Donut Chart & Legend
   renderDonutChart(expenseTotal, categoryTotals);
-
-  // 4. Render Budget Goal Meters
   renderBudgetMeters(categoryTotals);
-
-  // 5. Render Transaction Table
   renderTransactionFeed();
 }
 
@@ -110,7 +103,7 @@ function renderDonutChart(totalSpend, categoryTotals) {
   chartLegend.innerHTML = '';
 
   if (totalSpend === 0) {
-    donutChartSvg.innerHTML = `<circle cx="100" cy="100" r="70" stroke="rgba(255,255,255,0.08)" stroke-width="20" fill="none" />`;
+    donutChartSvg.innerHTML = `<circle cx="100" cy="100" r="70" stroke="rgba(255,255,255,0.08)" stroke-width="22" fill="none" />`;
     chartLegend.innerHTML = `<span style="font-size:12px; color:var(--text-muted); text-align:center;">No expense data available</span>`;
     return;
   }
@@ -125,7 +118,6 @@ function renderDonutChart(totalSpend, categoryTotals) {
     const strokeDashoffset = -cumulativePercent * circumference;
     const config = getCategoryConfig(cat);
 
-    // Create SVG Arc
     const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     circle.setAttribute('cx', '100');
     circle.setAttribute('cy', '100');
@@ -139,7 +131,6 @@ function renderDonutChart(totalSpend, categoryTotals) {
 
     donutChartSvg.appendChild(circle);
 
-    // Add Legend Item
     const legendItem = document.createElement('div');
     legendItem.className = 'legend-item';
     legendItem.innerHTML = `
@@ -186,16 +177,12 @@ function renderTransactionFeed() {
   if (!tableBody) return;
 
   const filtered = state.transactions.filter(t => {
-    // 1. Search Query
     const query = state.searchQuery.toLowerCase();
     const matchesSearch = t.merchant.toLowerCase().includes(query) ||
                           t.notes.toLowerCase().includes(query) ||
                           t.category.toLowerCase().includes(query);
 
-    // 2. Category Filter
     const matchesCategory = state.categoryFilter === 'all' || t.category === state.categoryFilter;
-
-    // 3. Type Filter
     const matchesType = state.typeFilter === 'all' || t.type === state.typeFilter;
 
     return matchesSearch && matchesCategory && matchesType;
@@ -261,7 +248,7 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-// AI Receipt Scanner Simulation
+// Receipt Scanner Simulation
 function simulateAIReceiptScan(merchant, amount, category, notes) {
   if (!receiptModal) return;
 
@@ -271,16 +258,15 @@ function simulateAIReceiptScan(merchant, amount, category, notes) {
 
   if (paperMerchant) paperMerchant.textContent = merchant;
   if (paperTotal) paperTotal.textContent = formatCurrency(amount);
-  if (statusText) statusText.textContent = 'TrackFi AI extracting OCR parameters...';
+  if (statusText) statusText.textContent = 'TrackFi OCR extracting receipt parameters...';
 
   receiptModal.classList.remove('hidden');
 
   setTimeout(() => {
-    if (statusText) statusText.textContent = 'Categorizing transaction with AI engine...';
+    if (statusText) statusText.textContent = 'Categorizing transaction details...';
   }, 700);
 
   setTimeout(() => {
-    // Add transaction
     const newTrans = {
       id: Date.now().toString(),
       merchant: merchant,
@@ -288,7 +274,7 @@ function simulateAIReceiptScan(merchant, amount, category, notes) {
       type: 'expense',
       category: category,
       date: new Date().toISOString().split('T')[0],
-      notes: notes || 'Scanned via AI OCR Engine'
+      notes: notes || 'Scanned via Receipt Reader'
     };
 
     state.transactions.unshift(newTrans);
@@ -296,7 +282,6 @@ function simulateAIReceiptScan(merchant, amount, category, notes) {
 
     receiptModal.classList.add('hidden');
 
-    // Scroll smoothly to dashboard
     const dashSec = document.getElementById('dashboard');
     if (dashSec) dashSec.scrollIntoView({ behavior: 'smooth' });
   }, 1600);
@@ -306,11 +291,9 @@ function simulateAIReceiptScan(merchant, amount, category, notes) {
 function processVoicePrompt(text) {
   if (!text.trim()) return;
 
-  // Extract amount using regex
   const amountMatch = text.match(/\$?([0-9]+(\.[0-9]{1,2})?)/);
   const amount = amountMatch ? parseFloat(amountMatch[1]) : 25.00;
 
-  // Auto assign category based on keywords
   let category = 'Other';
   const lower = text.toLowerCase();
 
@@ -331,7 +314,7 @@ function processVoicePrompt(text) {
     type: 'expense',
     category: category,
     date: new Date().toISOString().split('T')[0],
-    notes: 'Voice AI Entry'
+    notes: 'Voice Entry'
   };
 
   state.transactions.unshift(newTrans);
@@ -374,11 +357,9 @@ function exportCSV() {
 
 // Event Listeners Setup
 document.addEventListener('DOMContentLoaded', () => {
-  // Set default date input to today
   const transDateInput = document.getElementById('trans-date');
   if (transDateInput) transDateInput.value = new Date().toISOString().split('T')[0];
 
-  // Initial Render
   renderDashboard();
 
   // Search & Filters
@@ -403,7 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // AI Tabs Switcher
+  // Capability Tabs Switcher
   const tabBtns = document.querySelectorAll('.ai-tab-btn');
   tabBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -421,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // AI Sample Receipt Chips
+  // Sample Receipt Buttons & Presets
   const chipCoffee = document.getElementById('chip-sample-coffee');
   const chipGroceries = document.getElementById('chip-sample-groceries');
   const chipUber = document.getElementById('chip-sample-uber');
@@ -430,25 +411,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const openReceiptModalBtn = document.getElementById('open-receipt-scan-modal');
 
   if (chipCoffee) {
-    chipCoffee.addEventListener('click', () => simulateAIReceiptScan('Starcups Coffee', 4.95, 'Dining', 'AI Presets OCR'));
+    chipCoffee.addEventListener('click', () => simulateAIReceiptScan('Starcups Coffee', 4.95, 'Dining', 'Scanned Receipt'));
   }
   if (chipGroceries) {
-    chipGroceries.addEventListener('click', () => simulateAIReceiptScan('Whole Foods Market', 84.20, 'Groceries', 'AI Presets OCR'));
+    chipGroceries.addEventListener('click', () => simulateAIReceiptScan('Whole Foods Market', 84.20, 'Groceries', 'Scanned Receipt'));
   }
   if (chipUber) {
-    chipUber.addEventListener('click', () => simulateAIReceiptScan('Uber Transit', 24.50, 'Transport', 'AI Presets OCR'));
+    chipUber.addEventListener('click', () => simulateAIReceiptScan('Uber Transit', 24.50, 'Transport', 'Scanned Receipt'));
   }
   if (dropzone) {
-    dropzone.addEventListener('click', () => simulateAIReceiptScan('Bistro Lumiere', 62.80, 'Dining', 'OCR Dropzone Analysis'));
+    dropzone.addEventListener('click', () => simulateAIReceiptScan('Bistro Lumiere', 62.80, 'Dining', 'Dropzone Scan'));
   }
   if (heroScanBtn) {
-    heroScanBtn.addEventListener('click', () => simulateAIReceiptScan('Target Store', 38.90, 'Electronics', 'Hero Quick Scan'));
+    heroScanBtn.addEventListener('click', () => simulateAIReceiptScan('Target Store', 38.90, 'Electronics', 'Quick Scan'));
   }
   if (openReceiptModalBtn) {
-    openReceiptModalBtn.addEventListener('click', () => simulateAIReceiptScan('Blue Bottle Coffee', 6.50, 'Dining', 'Header Receipt Scan'));
+    openReceiptModalBtn.addEventListener('click', () => simulateAIReceiptScan('Blue Bottle Coffee', 6.50, 'Dining', 'Receipt Reader Scan'));
   }
 
-  // AI Voice Prompt Submit
+  // Voice Prompt Submit
   const voiceSubmitBtn = document.getElementById('voice-submit-btn');
   const voiceInputSim = document.getElementById('voice-input-sim');
   if (voiceSubmitBtn && voiceInputSim) {
@@ -477,7 +458,18 @@ document.addEventListener('DOMContentLoaded', () => {
     closeReceiptBtn.addEventListener('click', () => receiptModal.classList.add('hidden'));
   }
 
-  // Add Transaction Form Submission
+  // Close modals when clicking background overlay
+  [addModal, receiptModal].forEach(modal => {
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.add('hidden');
+        }
+      });
+    }
+  });
+
+  // Form Submission
   if (addForm) {
     addForm.addEventListener('submit', (e) => {
       e.preventDefault();
